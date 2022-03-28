@@ -1,0 +1,24 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Подтверждение регистрации на{{ site_name }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}Вы успешно зарегестрировались на {{ site_name }}.{% endblocktrans %}
+
+
+{% endblock text_body %}
+
+{% block html_body %}
+
+<p>{% blocktrans %}Вы успешно зарегестрировались на {{ site_name }}.{% endblocktrans %}</p>
+
+<p>{% trans "Чтобы продолжить перейдите по ссылке:" %}</p>
+<p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
+
+<p>{% trans "Спасибо посетили наш сайт :)" %}</p>
+
+<p>{% blocktrans %} {{ site_name }} команда{% endblocktrans %}</p>
+
+{% endblock html_body %}
