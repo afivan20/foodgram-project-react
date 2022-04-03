@@ -11,3 +11,7 @@
 python manage.py makemigrations
 python manage.py migrate
 ```
+### добавить в базу данных ингредиенты
+```
+python manage.py importcsv
+```

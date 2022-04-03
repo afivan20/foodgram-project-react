@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET', default ='mysecret)xxqy7m7ro!m6g17se5r)t&vv%t_@4ezmxz7d9!t-i1b3')
+SECRET_KEY = os.getenv('SECRET', default='mysecret)xxqy7m7ro!m6g17se5r)t&vv%t_@4ezmxz7d9!t-i1b3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'recipes.apps.RecipesConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
@@ -147,13 +153,16 @@ DJOSER = {
     #'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     #'SEND_CONFIRMATION_EMAIL': False,
-    'SEND_ACTIVATION_EMAIL':True,
+    'SEND_ACTIVATION_EMAIL': True,
     'HIDE_USERS': False,
     'EMAIL': {'activation': 'users.mail.MyMail'},
     'SERIALIZERS': {'current_user': 'users.serializers.UserSerializer',
                     'user_create': 'users.serializers.UserSerializer',
                     'user': 'users.serializers.UserSerializer',
-    },
+                    },
     'PERMISSIONS': {'user_list': ['rest_framework.permissions.AllowAny'],
                     },
 }
+
+
+

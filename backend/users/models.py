@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -47,6 +48,11 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    # @property
+    # def is_subscribed(self):
+    #     if self.username
+    # is_subscribed = Follow.objects.filter()
+
     @property
     def is_admin(self):
         if self.role == 'admin' or self.is_superuser:
@@ -57,12 +63,40 @@ class User(AbstractUser):
         if self.role == 'moderator' or self.is_superuser:
             return True
 
+    @property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = (
-            'username',
-        )
+        ordering = ('id',)
 
     def __str__(self):
         return self.username
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='follower',
+        on_delete=models.CASCADE,
+        help_text='Выберите пользователя',
+        verbose_name='Пользователь',
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='following',
+        on_delete=models.CASCADE,
+        verbose_name='Подписан',
+        help_text='Выберите на кого подписан пользователь',
+    )
+
+    class Meta():
+        constraints = (models.UniqueConstraint(
+            fields=('user', 'author'),
+            name='unique-in-module'
+        ),)
+
+    def __str__(self):
+        return f'{self.user.username} подписан на {self.author.username}'
