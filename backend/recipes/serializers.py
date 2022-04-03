@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User, Follow
+from users.models import User
 from recipes.models import Ingredient, Tag, Recipe, IngredientAmount
 from drf_base64.fields import Base64ImageField
 
@@ -11,17 +11,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()  # нужно описать метод .SerializerMethodField()
+    # is_subscribed = serializers.SerializerMethodField()  # нужно описать метод .SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed',)
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',)
 
-    def get_is_subscribed(self, obj):
-        print(self.context)
-        if Follow.objects.filter(user=3, author=obj).exists():  # взять id из request.username
-            return True
-        return False  # Follow.objects.filter(user=request_user, author=obj.author).exists()
+    # def get_is_subscribed(self, obj):
+    #     request = self.context.get('request')
+    #     return f'{request.user.username}'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -126,32 +124,3 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
         instance.save()
         return instance
-
-
-class FollowSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='author.id')
-    email = serializers.ReadOnlyField(source='author.email')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
-    is_subscribed = serializers.SerializerMethodField()
-    # recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Follow
-        fields = ('id', 'email', 'username', 'first_name', 'last_name',
-                  'is_subscribed',  # 'recipes',
-                  'recipes_count'
-                  )
-
-    def get_is_subscribed(self, obj):
-        request_user = self.context.get('request').user.id
-        return Follow.objects.filter(
-            user=request_user, author=obj.author
-        ).exists()
-
-    # def get_recipes(self, obj):
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()

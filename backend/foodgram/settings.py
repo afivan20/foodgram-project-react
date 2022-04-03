@@ -153,7 +153,7 @@ DJOSER = {
     #'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     #'SEND_CONFIRMATION_EMAIL': False,
-    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_ACTIVATION_EMAIL': False,
     'HIDE_USERS': False,
     'EMAIL': {'activation': 'users.mail.MyMail'},
     'SERIALIZERS': {'current_user': 'users.serializers.UserSerializer',

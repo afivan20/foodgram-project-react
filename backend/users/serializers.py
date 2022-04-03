@@ -1,6 +1,8 @@
 from users.models import User, Follow
+from recipes.models import Recipe
 from rest_framework import serializers
 from django.core.validators import RegexValidator
+from drf_base64.fields import Base64ImageField
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,12 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
                                      validators=[RegexValidator(regex='^[\w.@+-]+\Z', message='Username must be буквы, цифры, символы подчеркивания, точки и дефисы.',
                                                                 code='invalid_username'), ]
                                      )
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = (
             'email', 'id', 'username', 'first_name',
-            'last_name', 'password',
+            'last_name', 'password', 'is_subscribed',
         )
         extra_kwargs = {
             'password': {'write_only': True, },
@@ -25,6 +28,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+    def get_is_subscribed(self, obj):
+        request_user = self.context.get('request').user.id
+        return Follow.objects.filter(
+            user=request_user, author=obj
+        ).exists()
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -45,3 +54,43 @@ class UserRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+
+class FollowingRecipesSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time',)
+        read_only_fields = ('id', 'name', 'cooking_time')
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed',   'recipes',
+                  'recipes_count'
+                  )
+
+    def get_is_subscribed(self, obj):
+        request_user = self.context.get('request').user.id
+        print(f'request user is {request_user}')
+        return Follow.objects.filter(
+            user_id=request_user, author=obj
+        ).exists()
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj.pk).count()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        queryset = Recipe.objects.filter(author=obj.pk)
+        if limit:
+            queryset = queryset[:int(limit)]
+        return FollowingRecipesSerializer(queryset, many=True).data

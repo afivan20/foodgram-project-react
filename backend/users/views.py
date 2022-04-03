@@ -1,6 +1,6 @@
 from users.models import User, Follow
 from users.serializers import UserSerializer, UserDetailSerializer
-from recipes.serializers import FollowSerializer
+from users.serializers import FollowSerializer
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -10,7 +10,7 @@ from rest_framework.generics import get_object_or_404
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = FollowSerializer
+    serializer_class = UserDetailSerializer
 
     @action(
         detail=False,
@@ -25,11 +25,15 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, permission_classes=[IsAuthenticated], methods=('post',))
-    def subsribe(request):
-        id = 3  # подписка захардкодена
+
+class Subsribe(generics.CreateAPIView, generics.DestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserDetailSerializer
+
+    def post(self, request, pk):
         user = request.user
-        author = get_object_or_404(User, id=id)
+        author = get_object_or_404(User, id=pk)
         if author == user:
             return Response({
                     'errors': 'Вы не можете подписываться на самого себя'
@@ -37,11 +41,30 @@ class UserViewSet(viewsets.ModelViewSet):
         if Follow.objects.filter(user=user, author=author).exists():
             return Response({'errors': 'Вы уже подписаны на данного пользователя'},
                             status=status.HTTP_400_BAD_REQUEST)
-        follow = Follow.objects.get_or_create(user=user, author=author)
+        Follow.objects.get_or_create(user=user, author=author)
+        follow=User.objects.filter(username=author).first()
         serializer = FollowSerializer(
                 follow, context={'request': request}
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=('delete',), permission_classes=(IsAuthenticated,))
+    def delete(self, request, pk):
+        user = request.user
+        author = get_object_or_404(User, id=pk)
+        print(author)
+        if user == author:
+            return Response({
+                'errors': 'Вы не можете отписываться от самого себя'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        follow = Follow.objects.filter(user=user, author=author)
+        if follow.exists():
+            follow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response({
+            'errors': 'Вы уже отписались'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetail(generics.RetrieveAPIView):
