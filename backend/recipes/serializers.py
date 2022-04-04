@@ -1,18 +1,19 @@
 from rest_framework import serializers
+from users.models import Follow
 from users.models import User
 from recipes.models import Ingredient, Tag, Recipe, IngredientAmount
 from drf_base64.fields import Base64ImageField
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    # is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',)
+        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
 
-    # def get_is_subscribed(self, obj):
-    #     request = self.context.get('request')
-    #     return f'{request.user.username}'
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        return Follow.objects.filter(user=request.user, author=obj.pk).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -41,11 +42,10 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(read_only=True,)
+    author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
     image = Base64ImageField(read_only=True)
     ingredients = IngredientAmountSerializer(source='recipe_ingredients', many=True)
-
     class Meta:
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients',
@@ -75,7 +75,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image', 'text', 'cooking_time')
 
     def to_representation(self, instance):
-        serializer = RecipeListSerializer(instance)
+        request = self.context.get('request')
+        serializer = RecipeListSerializer(instance, context={'request': request,})
         return serializer.data
 
     def create(self, validated_data):
