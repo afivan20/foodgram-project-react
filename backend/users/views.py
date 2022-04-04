@@ -1,5 +1,6 @@
+from django import views
 from users.models import User, Follow
-from users.serializers import UserSerializer, UserDetailSerializer
+from users.serializers import UserSerializer, UserDetailSerializer, SubscriptionsSerializer
 from users.serializers import FollowSerializer
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
@@ -8,22 +9,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserDetailSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserDetailSerializer
 
-    @action(
-        detail=False,
-        methods=('get',),
-        permission_classes=(IsAuthenticated,)
-    )
-    def me(self, request):
-        serializer = UserSerializer(request.user,
-                                    data=request.data,
-                                    partial=True)
+#     @action(
+#         detail=False,
+#         methods=('get',),
+#         permission_classes=(IsAuthenticated,)
+#     )
+#     def mee(self, request):
+#         serializer = UserSerializer(request.user,
+#                                     data=request.data,
+#                                     partial=True)
 
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#         serializer.is_valid(raise_exception=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class Subsribe(generics.CreateAPIView, generics.DestroyAPIView):
@@ -65,6 +66,23 @@ class Subsribe(generics.CreateAPIView, generics.DestroyAPIView):
         return Response({
             'errors': 'Вы уже отписались'
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Subscriptions(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = SubscriptionsSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        data = Follow.objects.filter(user=user)
+        #pages = self.paginate_queryset(data)
+        serializer = SubscriptionsSerializer(
+            data,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)  # self.get_paginated_response(serializer.data) 
 
 
 class UserDetail(generics.RetrieveAPIView):

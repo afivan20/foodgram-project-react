@@ -4,15 +4,8 @@ from recipes.models import Ingredient, Tag, Recipe, IngredientAmount
 from drf_base64.fields import Base64ImageField
 
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = '__all__'
-
-
 class AuthorSerializer(serializers.ModelSerializer):
-    # is_subscribed = serializers.SerializerMethodField()  # нужно описать метод .SerializerMethodField()
-
+    # is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',)
@@ -20,6 +13,12 @@ class AuthorSerializer(serializers.ModelSerializer):
     # def get_is_subscribed(self, obj):
     #     request = self.context.get('request')
     #     return f'{request.user.username}'
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -49,8 +48,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image', 'text',
-                  'cooking_time')
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'name', 'image', 'text', 'cooking_time',)
 
 
 class IngredientAmountCreateSerializer(serializers.ModelSerializer):
