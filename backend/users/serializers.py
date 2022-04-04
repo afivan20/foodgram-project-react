@@ -57,12 +57,10 @@ class UserRecipeSerializer(serializers.ModelSerializer):
 
 
 class FollowingRecipesSerializer(serializers.ModelSerializer):
-    image = Base64ImageField(read_only=True)
-
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time',)
-        read_only_fields = ('id', 'name', 'cooking_time')
+        #read_only_fields = ('id', 'name', 'cooking_time')
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -79,7 +77,6 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request_user = self.context.get('request').user.id
-        print(f'request user is {request_user}')
         return Follow.objects.filter(
             user_id=request_user, author=obj
         ).exists()
@@ -108,8 +105,8 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'recipes',
-                  'is_subscribed', 'recipes_count',)
+        fields = ( 'email', 'id','username', 'first_name', 'last_name', 'is_subscribed',
+                    'recipes', 'recipes_count',)
     
     def get_recipes(self, obj):
         request = self.context.get('request')

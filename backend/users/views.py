@@ -68,6 +68,8 @@ class Subsribe(generics.CreateAPIView, generics.DestroyAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class Subscriptions(generics.GenericAPIView):
     queryset = User.objects.all()
     serializer_class = SubscriptionsSerializer

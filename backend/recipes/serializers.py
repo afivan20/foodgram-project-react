@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from users.models import Follow
 from users.models import User
-from recipes.models import Ingredient, Tag, Recipe, IngredientAmount
+from recipes.models import Ingredient, Tag, Recipe, IngredientAmount, ShoppingCart
 from drf_base64.fields import Base64ImageField
+from django.shortcuts import get_object_or_404
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -13,6 +14,8 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
+        if request.user.is_anonymous:
+            return False
         return Follow.objects.filter(user=request.user, author=obj.pk).exists()
 
 
@@ -44,12 +47,25 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 class RecipeListSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
-    image = Base64ImageField(read_only=True)
     ingredients = IngredientAmountSerializer(source='recipe_ingredients', many=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients',
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time',)
+
+    def get_is_favorited(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Recipe.objects.filter(favorites__user=user, id=obj.id).exists()
+    
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(user=user, id=obj.id).exists()
 
 
 class IngredientAmountCreateSerializer(serializers.ModelSerializer):
