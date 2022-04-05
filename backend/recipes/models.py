@@ -8,6 +8,10 @@ class Tag(models.Model):
     color = models.CharField(max_length=7, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
 
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
     def __str__(self):
         return self.name
 
@@ -18,7 +22,9 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ['id']
-
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+    
     def __str__(self):
         return self.name
 
@@ -36,14 +42,18 @@ class IngredientAmount(models.Model):
             validators.MinValueValidator(
                 1, 'Добавьте необходимое количество для ингредиента'),))
 
+    class Meta:
+        verbose_name = 'Кол-во ингредиента'
+        verbose_name_plural = 'Кол-во ингредиентов'                
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     ingredients = models.ManyToManyField(
-        Ingredient, through=IngredientAmount,
+        Ingredient, through=IngredientAmount, blank=False,
         through_fields=('recipe', 'ingredient', ),
         )
-    tags = models.ManyToManyField(Tag, blank=True, related_name='recipe')
+    tags = models.ManyToManyField(Tag, blank=False, related_name='recipe')
     image = models.ImageField(upload_to='recipes/images/')
     name = models.CharField(max_length=200)
     text = models.TextField()
@@ -52,6 +62,11 @@ class Recipe(models.Model):
             validators.MinValueValidator(1, message='минимальное время 1 минута'),
                    ),
                 )
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
 
 class Favorite(models.Model):
@@ -75,6 +90,7 @@ class Favorite(models.Model):
                                     name='fav uniq')
         ]
 
+
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
@@ -90,6 +106,8 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='cart-user uniq')

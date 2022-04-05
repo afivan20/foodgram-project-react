@@ -12,13 +12,12 @@
 
 {% block html_body %}
 
-<p>{% blocktrans %}Вы успешно зарегестрировались на {{ site_name }}.{% endblocktrans %}</p>
-
+<p>{% blocktrans %}Это письмо-подтверждение о том, что вы успешно зарегестрировались на {{ site_name }}.{% endblocktrans %}</p>
 <p>{% trans "Чтобы продолжить перейдите по ссылке:" %}</p>
-<p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
+<p><a href="{{ protocol }}://{{ domain }}/recipes/create/">Опубликовать первый рецепт</a></p>
 
-<p>{% trans "Спасибо посетили наш сайт :)" %}</p>
+<p>{% trans "Спасибо, что посетили наш сайт :)" %}</p>
 
-<p>{% blocktrans %} {{ site_name }} команда{% endblocktrans %}</p>
+<p>{% blocktrans %} Команда {{ site_name }} {% endblocktrans %}</p>
 
 {% endblock html_body %}

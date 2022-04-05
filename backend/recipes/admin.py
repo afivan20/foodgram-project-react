@@ -5,6 +5,7 @@ from recipes.models import Ingredient, Tag, Recipe, IngredientAmount, Favorite, 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
+    list_filter = ('name',)
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'color')
@@ -17,6 +18,7 @@ class RecipeIngredientInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline,)
     list_display = ('id','name', 'author',)
+    list_filter = ('author', 'name', 'tags',)
 
 class IngredientInRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe','ingredient', 'amount',)

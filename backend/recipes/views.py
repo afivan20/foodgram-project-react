@@ -1,22 +1,27 @@
 from rest_framework import viewsets
-from recipes.models import Ingredient, Tag, Recipe, Favorite, ShoppingCart
+from recipes.models import Ingredient, Tag, Recipe, Favorite, ShoppingCart, IngredientAmount
 from recipes.serializers import IngredientSerializer, TagSerializer, RecipeSerializer
 from users.serializers import FollowingRecipesSerializer
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+import io
+from django.http import HttpResponse
+from django.db.models import Sum
+from recipes.filters import RecipeFilter, IngredientFilter
+
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     pagination_class = None
     serializer_class = IngredientSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['^name']
+    filter_backends = (IngredientFilter,)
+    search_fields = ('^name',)
 
     def get(self, request):
-        serializer = self.serializer_class(self.get_queryset(), many=True)
+        serializer = self.serializer_class(self.get_queryset(), many=True, context={'request': request,})
         return Response(serializer.data)
 
 
@@ -30,7 +35,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    # filter_class = AuthorAndTagFilter
+    filter_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -67,4 +72,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response({'errors': 'Этот рецепт уже удален :( '}, status=status.HTTP_400_BAD_REQUEST)
 
-
+    @action(methods=['get'], permission_classes=[IsAuthenticated], detail=False)
+    def download_shopping_cart(self, request):
+        ingredients_list = IngredientAmount.objects.annotate(sum_amount=Sum('amount')
+                                                             ).values(
+            'ingredient__name',
+            'sum_amount',
+            'ingredient__measurement_unit'
+        ).filter(
+            recipe__shoppingcart__user=request.user
+        )
+        if ingredients_list:
+            with io.StringIO() as ingredients:
+                ingredients.write('Ингредиенты\n')
+                for index, data in enumerate(ingredients_list):
+                    ingredients.write(
+                        f"{index + 1}. {data.get('ingredient__name')}-"
+                        f"{data.get('sum_amount')}"
+                        f"({data.get('ingredient__measurement_unit')})\n"
+                    )
+                ingredients.seek(0)
+                response = HttpResponse(
+                                        ingredients.read().encode('utf-8'),
+                                        content_type='text/plain; charset=utf-8'
+                                        )
+                return response

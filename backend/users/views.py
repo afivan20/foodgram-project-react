@@ -53,7 +53,6 @@ class Subsribe(generics.CreateAPIView, generics.DestroyAPIView):
     def delete(self, request, pk):
         user = request.user
         author = get_object_or_404(User, id=pk)
-        print(author)
         if user == author:
             return Response({
                 'errors': 'Вы не можете отписываться от самого себя'

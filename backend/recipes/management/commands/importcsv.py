@@ -10,7 +10,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         Ingredient.objects.all().delete()
-        User.objects.all().delete()
 
         ingredient = f'{BASE_DIR}/data/ingredients.csv'
         with open(ingredient) as file:
