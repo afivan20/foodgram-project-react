@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 
 
 class AuthorSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для отображения поля author в рецепте."""
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
@@ -20,12 +21,14 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для отображения поля tags в рецепте."""
     class Meta:
         model = Tag
         fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для отображения поля ingredients в рецепте."""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
@@ -33,6 +36,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для отображения дополнительного поля amount рецепта в .to_representation() """
     id = serializers.PrimaryKeyRelatedField(
         source='ingredient',
         queryset=Ingredient.objects.all())
@@ -45,6 +49,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для отображения рецепта в .to_representation() """
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = IngredientAmountSerializer(source='recipe_ingredients', many=True)
@@ -65,10 +70,11 @@ class RecipeListSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(user=user, id=obj.id).exists()
+        return ShoppingCart.objects.filter(user=user.pk, recipe=obj.pk).exists()
 
 
 class IngredientAmountCreateSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для создания рецепта с дополнительным полем amount."""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all())
 
@@ -78,6 +84,7 @@ class IngredientAmountCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериалазейзер для рецептов GET, POST, PATCH, DELETE."""
     author = AuthorSerializer(read_only=True,)
     tags = serializers.PrimaryKeyRelatedField(
         many=True,

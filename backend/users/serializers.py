@@ -50,12 +50,6 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ).exists()
 
 
-class UserRecipeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 class FollowingRecipesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
@@ -90,7 +84,8 @@ class FollowSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj.pk)
         if limit:
             queryset = queryset[:int(limit)]
-        return FollowingRecipesSerializer(queryset, many=True).data
+        serializer = FollowingRecipesSerializer(queryset, many=True, context={'request': request, })
+        return serializer.data
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
@@ -114,7 +109,8 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj.author)
         if limit:
             queryset = queryset[:int(limit)]
-        return FollowingRecipesSerializer(queryset, many=True).data
+        serializer = FollowingRecipesSerializer(queryset, many=True, context={'request': request, })
+        return serializer.data
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user.id

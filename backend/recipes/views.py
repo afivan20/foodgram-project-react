@@ -42,7 +42,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response({'errors': 'Вы уже добавили рецепт.'}, status=status.HTTP_400_BAD_REQUEST)
             recipe = get_object_or_404(Recipe, id=pk)
             Favorite.objects.create(user=request.user, recipe=recipe)
-            serializer = FollowingRecipesSerializer(recipe)
+            serializer = FollowingRecipesSerializer(recipe, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
             recipe = Favorite.objects.filter(user=request.user, recipe__id=pk)
@@ -58,7 +58,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response({'errors': 'Вы уже добавили рецепт.'}, status=status.HTTP_400_BAD_REQUEST)
             recipe = get_object_or_404(Recipe, id=pk)
             ShoppingCart.objects.create(user=request.user, recipe=recipe)
-            serializer = FollowingRecipesSerializer(recipe)
+            serializer = FollowingRecipesSerializer(recipe, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
             recipe = ShoppingCart.objects.filter(user=request.user, recipe__id=pk)

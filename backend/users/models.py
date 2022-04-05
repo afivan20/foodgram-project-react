@@ -48,11 +48,6 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
-    # @property
-    # def is_subscribed(self):
-    #     if self.username
-    # is_subscribed = Follow.objects.filter()
-
     @property
     def is_admin(self):
         if self.role == 'admin' or self.is_superuser:
@@ -92,11 +87,11 @@ class Follow(models.Model):
         help_text='Выберите на кого подписан пользователь',
     )
 
-    class Meta():
+    class Meta:
+        verbose_name = 'Подписчик'
+        verbose_name_plural = 'Подписчики'
+        ordering = ('-id',)
         constraints = (models.UniqueConstraint(
             fields=('user', 'author'),
             name='unique-in-module'
         ),)
-
-    # def __str__(self):
-    #     return f'{self.user.username} подписан на {self.author.username}'
