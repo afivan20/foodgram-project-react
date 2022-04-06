@@ -36,6 +36,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_class = RecipeFilter
+    
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

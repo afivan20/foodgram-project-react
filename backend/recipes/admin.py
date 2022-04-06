@@ -23,9 +23,13 @@ class RecipeAdmin(admin.ModelAdmin):
 class IngredientInRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe','ingredient', 'amount',)
 
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('user','recipe',)
+
+
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(IngredientAmount, IngredientInRecipeAdmin)
 admin.site.register(Favorite)
-admin.site.register(ShoppingCart)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)
