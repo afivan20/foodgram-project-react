@@ -1,3 +1,4 @@
+
 from rest_framework import viewsets
 from recipes.models import (Ingredient, Tag, Recipe,
                             Favorite, ShoppingCart, IngredientAmount)
@@ -10,10 +11,13 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-import io
 from django.http import HttpResponse
 from django.db.models import Sum
 from recipes.filters import RecipeFilter, IngredientFilter
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.pagesizes import A4
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -120,28 +124,33 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False
         )
     def download_shopping_cart(self, request):
-        ingredients_list = IngredientAmount.objects.annotate(
-            sum_amount=Sum('amount')
-            ).values(
-            'ingredient__name',
-            'sum_amount',
-            'ingredient__measurement_unit'
-                    ).filter(
+        ingredients_list = IngredientAmount.objects.filter(
             recipe__shoppingcart__user=request.user
-                            )
-        if ingredients_list:
-            with io.StringIO() as ingredients:
-                ingredients.write('Ингредиенты\n')
-                for index, data in enumerate(ingredients_list):
-                    ingredients.write(
-                        f"{index + 1}. {data.get('ingredient__name')}-"
-                        f"{data.get('sum_amount')}"
-                        f"({data.get('ingredient__measurement_unit')})\n"
-                    )
-                ingredients.seek(0)
-                content_type = 'text/plain; charset=utf-8'
-                response = HttpResponse(
-                                        ingredients.read().encode('utf-8'),
-                                        content_type=content_type
-                                        )
-                return response
+                            ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+                    ).annotate(
+            sum_amount=Sum('amount'))
+        x, y = 45, 710
+        response = HttpResponse(content_type='application/pdf')
+        canvas = Canvas(response, pagesize=A4)
+        pdfmetrics.registerFont(TTFont('FreeSans', 'media/fonts/FreeSans.ttf'))
+        canvas.setFont('FreeSans', 32)
+        canvas.setTitle('Список покупок')
+        canvas.drawString(x, y + 35, 'Список покупок: ')
+        canvas.setFont('FreeSans', 22)
+        for number, item in enumerate(ingredients_list, start=1):
+            if y < 120:
+                y = 710
+                canvas.showPage()
+                canvas.setFont('FreeSans', 22)
+            canvas.drawString(
+                x, y,
+                f'{number}. {item["ingredient__name"]} - '
+                f'{item["sum_amount"]}'
+                f' {item["ingredient__measurement_unit"]};'
+            )
+            y -= 35
+        canvas.showPage()
+        canvas.save()
+        return response
