@@ -1,17 +1,19 @@
 from rest_framework import serializers
 from users.models import Follow
 from users.models import User
-from recipes.models import Ingredient, Tag, Recipe, IngredientAmount, ShoppingCart
+from recipes.models import (Ingredient, Tag, Recipe,
+                            IngredientAmount, ShoppingCart)
 from drf_base64.fields import Base64ImageField
-from django.shortcuts import get_object_or_404
 
 
 class AuthorSerializer(serializers.ModelSerializer):
     """Сериалазейзер для отображения поля author в рецепте."""
     is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed')
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -36,11 +38,17 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    """Сериалазейзер для отображения дополнительного поля amount рецепта в .to_representation() """
+    """
+    Сериалазейзер для отображения дополнительного поля amount рецепта
+    в .to_representation().
+    """
     id = serializers.PrimaryKeyRelatedField(
         source='ingredient',
         queryset=Ingredient.objects.all())
-    measurement_unit = serializers.CharField(source='ingredient.measurement_unit', read_only=True)
+    measurement_unit = serializers.CharField(
+        source='ingredient.measurement_unit',
+        read_only=True
+        )
     name = serializers.CharField(source='ingredient.name', read_only=True)
 
     class Meta:
@@ -52,12 +60,17 @@ class RecipeListSerializer(serializers.ModelSerializer):
     """Сериалазейзер для отображения рецепта в .to_representation() """
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
-    ingredients = IngredientAmountSerializer(source='recipe_ingredients', many=True)
+    ingredients = IngredientAmountSerializer(
+        source='recipe_ingredients',
+        many=True
+        )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart',
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time',)
 
     def get_is_favorited(self, obj):
@@ -65,12 +78,13 @@ class RecipeListSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return Recipe.objects.filter(favorites__user=user, id=obj.id).exists()
-    
+
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(user=user.pk, recipe=obj.pk).exists()
+        return ShoppingCart.objects.filter(user=user.pk,
+                                           recipe=obj.pk).exists()
 
 
 class IngredientAmountCreateSerializer(serializers.ModelSerializer):
@@ -95,11 +109,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image', 'text', 'cooking_time')
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'name', 'image', 'text', 'cooking_time')
 
     def to_representation(self, instance):
         request = self.context.get('request')
-        serializer = RecipeListSerializer(instance, context={'request': request,})
+        serializer = RecipeListSerializer(instance,
+                                          context={'request': request, })
         return serializer.data
 
     def create(self, validated_data):

@@ -2,13 +2,14 @@ from users.models import User, Follow
 from recipes.models import Recipe
 from rest_framework import serializers
 from django.core.validators import RegexValidator
-from drf_base64.fields import Base64ImageField
 
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=150, required=True,
-                                     validators=[RegexValidator(regex='^[\w.@+-]+\Z', message='Username must be буквы, цифры, символы подчеркивания, точки и дефисы.',
-                                                                code='invalid_username'), ]
+                                     validators=[RegexValidator(
+                                        regex='^[\w.@+-]+\Z',
+                                        message=('Username состоит из букв, цифр, символов подчеркивания, точек и дефисов.'),
+                                        code='invalid_username'), ]
                                      )
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
@@ -41,7 +42,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', )
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'is_subscribed', )
 
     def get_is_subscribed(self, obj):
         request_user = self.context.get('request').user.id
@@ -54,7 +56,6 @@ class FollowingRecipesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time',)
-        #read_only_fields = ('id', 'name', 'cooking_time')
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -84,7 +85,9 @@ class FollowSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj.pk)
         if limit:
             queryset = queryset[:int(limit)]
-        serializer = FollowingRecipesSerializer(queryset, many=True, context={'request': request, })
+        serializer = FollowingRecipesSerializer(queryset,
+                                                many=True,
+                                                context={'request': request, })
         return serializer.data
 
 
@@ -100,16 +103,19 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ( 'email', 'id','username', 'first_name', 'last_name', 'is_subscribed',
-                    'recipes', 'recipes_count',)
-    
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'is_subscribed',
+                  'recipes', 'recipes_count',)
+
     def get_recipes(self, obj):
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
         queryset = Recipe.objects.filter(author=obj.author)
         if limit:
             queryset = queryset[:int(limit)]
-        serializer = FollowingRecipesSerializer(queryset, many=True, context={'request': request, })
+        serializer = FollowingRecipesSerializer(queryset,
+                                                many=True,
+                                                context={'request': request, })
         return serializer.data
 
     def get_is_subscribed(self, obj):
