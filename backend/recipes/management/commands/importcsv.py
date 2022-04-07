@@ -6,12 +6,11 @@ from users.models import User
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
 
         Ingredient.objects.all().delete()
 
-        ingredient = f'{BASE_DIR}/data/ingredients.csv'
+        ingredient = f"{BASE_DIR}/data/ingredients.csv"
         with open(ingredient) as file:
             reader = csv.reader(file)
             id = 1
@@ -20,4 +19,4 @@ class Command(BaseCommand):
                 Ingredient.objects.create(id=id, name=row[0], measurement_unit=row[1])
                 id += 1
 
-        print(f'в базу данных успешно добавлены ингредиенты - {id-1} шт. ✅')
+        print(f"в базу данных успешно добавлены ингредиенты - {id-1} шт. ✅")

@@ -3,9 +3,8 @@ from users.models import User, Follow
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'email', 'full_name',
-                    'role', 'is_superuser', 'is_active')
-    list_filter = ('email', 'username')
+    list_display = ("pk", "email", "full_name", "is_superuser", "is_active")
+    list_filter = ("email", "username")
 
     def save_model(self, request, obj, form, change):
         if obj.pk:
@@ -18,7 +17,10 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author',)
+    list_display = (
+        "user",
+        "author",
+    )
 
 
 admin.site.register(User, UserAdmin)

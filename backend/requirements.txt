@@ -6,3 +6,5 @@ drf-base64
 Pillow==9.0.1
 django-filter==21.1
 reportlab==3.6.9
+black
+psycopg2-binary
