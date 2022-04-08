@@ -74,9 +74,7 @@ class FollowSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
         method_name="get_is_subscribed"
     )
-    recipes = serializers.SerializerMethodField(
-        method_name="get_recipes"
-    )
+    recipes = serializers.SerializerMethodField(method_name="get_recipes")
     recipes_count = serializers.SerializerMethodField(
         method_name="get_recipes_count"
     )
@@ -168,7 +166,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         return Follow.objects.filter(user_id=user, author=obj.author).exists()
 
     def get_recipes_count(self, obj):
-        print(obj.author)
         author = get_object_or_404(User, username=obj.author)
         recipes = author.recipes_author.all().count()
         return recipes

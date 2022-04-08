@@ -1,6 +1,7 @@
 from django.db import models
 from django.core import validators
 from users.models import User
+from foodgram import settings
 
 
 class Tag(models.Model):
@@ -32,7 +33,7 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField(
         "единицы измерения",
         max_length=200,
-        help_text="введите ед.и (например, кг)"
+        help_text="введите ед.и (например, кг)",
     )
 
     class Meta:
@@ -48,14 +49,14 @@ class IngredientAmount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name="ingredient_amounts",
+        related_name="amounts",  # старый related_name="ingredient_amounts"
         verbose_name="ингредиент",
         help_text="выберите ингредиент",
     )
     recipe = models.ForeignKey(
         "Recipe",
         on_delete=models.CASCADE,
-        related_name="recipe_amounts",
+        related_name="amounts",  # старый related_name="recipe_amounts"
         verbose_name="рецепт",
         help_text="выберите рецепт",
     )
@@ -64,7 +65,8 @@ class IngredientAmount(models.Model):
         help_text="введите кол-во",
         validators=(
             validators.MinValueValidator(
-                1, "Добавьте необходимое количество для ингредиента"
+                settings.AMOUNT_MIN,
+                f"укажите минимум {settings.AMOUNT_MIN} кол-ва ингредиента",
             ),
         ),
     )
@@ -122,7 +124,8 @@ class Recipe(models.Model):
         help_text="время приготоваления в минутах",
         validators=(
             validators.MinValueValidator(
-                1, message="пожалуйста, укажите время приготовления"
+                settings.COOKING_TIME_MIN,
+                f"время приготовления минимум {settings.COOKING_TIME_MIN}",
             ),
         ),
     )
@@ -140,6 +143,7 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name="favorites",  # добавил related_name
         verbose_name="Пользователь",
         help_text="выберите пользователя",
     )
@@ -154,9 +158,15 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = "Избранные"
         verbose_name_plural = "Избранные"
-        constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"], name="fav uniq")
-        ]
+        constraints = (
+            models.UniqueConstraint(
+                fields=(
+                    "user",
+                    "recipe",
+                ),
+                name="fav uniq",
+            ),
+        )
 
     def __str__(self):
         return f"{self.user.username}-{self.recipe}"
@@ -181,12 +191,15 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Список покупок"
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=["user", "recipe"],
-                name="cart-user uniq"
-            )
-        ]
+                fields=(
+                    "user",
+                    "recipe",
+                ),
+                name="cart-user uniq",
+            ),
+        )
 
     def __str__(self):
         return f"{self.user.username}: {self.recipe.name}"
