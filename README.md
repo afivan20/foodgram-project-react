@@ -5,6 +5,10 @@
 Foodgram - это книга рецептов, здесь вы можете обмениваться кулинарными изысками, выбирать понравившееся и сохранять их. Foodgram поможет составить вам список покупок для любого блюда. 
 http://django-foodgram.ru
 
+### для входа в админку 
+<b>email:</b> ```admin@mail.fake```
+<b>password:</b> ```admin```
+
 ## Как запустить проект на удаленном сервере:
 ### Подготовить сервер ###
 ```
@@ -24,7 +28,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 ### Настройка инфраструктуры
 -  Перенести файлы `docker-compose.yaml` и `default.conf` на удаленный сервер.
-- Прописать секреты в `https://github.com/<ваш-username>/yamdb_final/settings/secrets/actions`:
+- Прописать секреты:
 <dl>
 <dt>для удаленного сервера:</dt>
 HOST<br>
@@ -47,7 +51,6 @@ DOCKER_PASSWORD<br>
 EMAIL_SMTP<br>
 EMAIL<br>
 EMAIL_PASSWORD<br>
-
 </dl>
 
 - Выполнить миграции на удаленном сервере:
