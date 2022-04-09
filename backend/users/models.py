@@ -3,13 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    username = models.SlugField(
-        "Имя пользователя",
-        help_text="Имя пользователя",
-        max_length=150,
-        blank=False,
-        unique=True,
-    )
     email = models.EmailField(
         "Эл. почта",
         help_text="Эл. почта пользователя",
@@ -42,6 +35,8 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
 
 
 class Follow(models.Model):
