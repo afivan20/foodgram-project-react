@@ -12,11 +12,12 @@ from recipes.models import (
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "measurement_unit")
     search_fields = ("name",)
-    list_filter = ("name",)
+    list_filter = ("measurement_unit",)
 
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "color")
+    search_fields = ("name","slug",)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -29,11 +30,10 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "author", "fav_count")
     search_fields = (
         "name",
-        "author",
+        "author__username",
     )
     list_filter = (
         "author",
-        "name",
         "tags",
     )
 
@@ -57,8 +57,8 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         "recipe",
     )
     search_fields = (
-        "user",
-        "recipe",
+        "user__username",  
+        "recipe__name",
     )
 
 

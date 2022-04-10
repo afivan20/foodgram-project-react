@@ -69,13 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DB_ENGINE", default="django.db.backends.postgresql"),
@@ -138,7 +131,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 DJOSER = {
     "ACTIVATION_URL": "#/activate/{uid}/{token}",
-    "SEND_ACTIVATION_EMAIL": False,
+    "SEND_ACTIVATION_EMAIL": True,
     "HIDE_USERS": False,
     "EMAIL": {"activation": "users.mail.MyMail"},
     "SERIALIZERS": {
