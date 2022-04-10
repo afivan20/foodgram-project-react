@@ -50,6 +50,10 @@ EMAIL<br>
 EMAIL_PASSWORD<br>
 </dl>
 
+- Поднять контейнеры:
+```
+sudo docker-compose up -d
+```
 - Выполнить миграции на удаленном сервере:
 ```
 sudo docker-compose exec backend python manage.py makemigrations; sudo docker-compose exec backend python manage.py migrate
