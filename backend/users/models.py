@@ -20,7 +20,7 @@ class User(AbstractUser):
         blank=False
     )
 
-    password = models.CharField(max_length=150, validators=[validate_password] )
+    password = models.CharField(max_length=150, validators=[validate_password])
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -36,8 +36,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
 
 
 class Follow(models.Model):

@@ -17,11 +17,9 @@ class IsAuthenticatedAndOwner(BasePermission):
             request.user and
             request.user.is_authenticated
         )
-    
+
     def has_object_permission(self, request, view, obj):
         if (request.method == 'DELETE' or request.method == 'PATCH' or request.method == 'PUT'):
             return obj.author == request.user
         else:
             return True
-        
-

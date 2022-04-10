@@ -17,7 +17,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "color")
-    search_fields = ("name","slug",)
+    search_fields = ("name", "slug",)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -57,7 +57,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         "recipe",
     )
     search_fields = (
-        "user__username",  
+        "user__username",
         "recipe__name",
     )
 

@@ -49,14 +49,14 @@ class IngredientAmount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name="amounts",  # старый related_name="ingredient_amounts"
+        related_name="amounts",
         verbose_name="ингредиент",
         help_text="выберите ингредиент",
     )
     recipe = models.ForeignKey(
         "Recipe",
         on_delete=models.CASCADE,
-        related_name="amounts",  # старый related_name="recipe_amounts"
+        related_name="amounts",
         verbose_name="рецепт",
         help_text="выберите рецепт",
     )
@@ -143,7 +143,7 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="favorites",  # добавил related_name
+        related_name="favorites",
         verbose_name="Пользователь",
         help_text="выберите пользователя",
     )
