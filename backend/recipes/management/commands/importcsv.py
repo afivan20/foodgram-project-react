@@ -13,10 +13,10 @@ class Command(BaseCommand):
         ingredient = f"{BASE_DIR}/data/ingredients.csv"
         with open(ingredient) as file:
             reader = csv.reader(file)
-            id = 1
+            id = 0
             for row in reader:
                 print(row[0])
-                Ingredient.objects.create(id=id, name=row[0], measurement_unit=row[1])
+                Ingredient.objects.create(name=row[0], measurement_unit=row[1])
                 id += 1
 
-        print(f"в базу данных успешно добавлены ингредиенты - {id-1} шт. ✅")
+        print(f"в базу данных успешно добавлены ингредиенты - {id} шт. ✅")

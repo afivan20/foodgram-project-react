@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.password_validation import validate_password
 
 
 class User(AbstractUser):
@@ -19,7 +20,7 @@ class User(AbstractUser):
         blank=False
     )
 
-    password = models.CharField(max_length=150)
+    password = models.CharField(max_length=150, validators=[validate_password] )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

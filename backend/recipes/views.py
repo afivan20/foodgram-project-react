@@ -12,6 +12,7 @@ from recipes.serializers import (
     TagSerializer,
     RecipeSerializer
 )
+from recipes.permissions import IsAuthenticatedAndOwner
 from users.serializers import FollowingRecipesSerializer
 from rest_framework import status
 from rest_framework.response import Response
@@ -58,7 +59,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedAndOwner]
     filter_class = RecipeFilter
 
     def perform_create(self, serializer):

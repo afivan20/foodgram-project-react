@@ -4,7 +4,6 @@ from recipes.models import Recipe
 from rest_framework import serializers
 from django.core.validators import RegexValidator
 
-
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор модели User."""
 
