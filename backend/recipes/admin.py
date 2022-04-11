@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.shortcuts import get_object_or_404
 from recipes.models import (
     Ingredient,
     Tag,
@@ -7,6 +8,7 @@ from recipes.models import (
     Favorite,
     ShoppingCart,
 )
+from users.models import User
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -27,16 +29,20 @@ class RecipeIngredientInline(admin.TabularInline):
 
 class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeIngredientInline,)
-    list_display = ("id", "name", "author", "fav_count",)
+    list_display = ("id", "name", "author", "email", "fav_count",)
     search_fields = (
         "name",
         "author__username",
-        "author__email", 
+        "author__email",
     )
     list_filter = (
         "author",
         "tags",
     )
+
+    def email(self, obj):
+        user = get_object_or_404(User, pk=obj.author.pk)
+        return user.email
 
     def fav_count(self, obj):
         return Favorite.objects.filter(recipe=obj).count()
@@ -52,9 +58,11 @@ class IngredientInRecipeAdmin(admin.ModelAdmin):
     )
     search_fields = ("ingredient__name", "recipe__name", )
 
+
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         "user",
+        "email",
         "recipe",
     )
     search_fields = (
@@ -62,11 +70,16 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         "user__email",
         "recipe__name",
     )
+
+    def email(self, obj):
+        user = get_object_or_404(User, pk=obj.user.pk)
+        return user.email
 
 
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = (
         "user",
+        "email",
         "recipe",
     )
     search_fields = (
@@ -74,6 +87,11 @@ class FavoriteAdmin(admin.ModelAdmin):
         "user__email",
         "recipe__name",
     )
+
+    def email(self, obj):
+        user = get_object_or_404(User, pk=obj.user.pk)
+        return user.email
+
 
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
