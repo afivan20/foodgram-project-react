@@ -7,7 +7,7 @@ http://django-foodgram.ru
 
 ## Технологии
 Фронтенд - <b>React</b><br> 
-Бекэнд - <b>Django Rest Framework</b><br>
+Бекэнд - https://www.django-rest-framework.org/<br>
 Документация со всеми эндпоинтами доступна здесь - http://django-foodgram.ru/api/docs/redoc.html <br>
 Используется веб-сервер <b>Nginx</b> и <b>Docker</b> контейнеры:<br>
 База Данных - <b>PostgreSql</b><br>
