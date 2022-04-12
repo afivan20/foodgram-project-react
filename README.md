@@ -6,11 +6,12 @@ Foodgram - это книга рецептов, здесь вы можете об
 http://django-foodgram.ru
 
 ## Технологии
-Фронтенд - <b>React</b><br> 
-Бекэнд - https://www.django-rest-framework.org/<br>
+Фронтенд - <b>REACT</b><br> 
+Бекэнд - [![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/)<br>
 Документация со всеми эндпоинтами доступна здесь - http://django-foodgram.ru/api/docs/redoc.html <br>
-Используется веб-сервер <b>Nginx</b> и <b>Docker</b> контейнеры:<br>
-База Данных - <b>PostgreSql</b><br>
+Веб-сервер - [![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/)<br>
+[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)<br>
+База Данных - [![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/)<br>
 
 Инфраструктура описана в <b>docker-compose</b> `/infra/docker-compose.yml`
 
