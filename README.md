@@ -9,11 +9,8 @@ http://django-foodgram.ru
 Фронтенд - <b>React</b><br> 
 Бекэнд - <b>Django Rest Framework</b><br>
 Документация со всеми эндпоинтами доступна здесь - http://django-foodgram.ru/api/docs/redoc.html <br>
-Используется веб-сервер <b>Nginx</b> и <b>Docker</b> контенеры:<br>
-Frontend<br>
-Backend<br>
-PostgreSql<br>
-Nginx<br>
+Используется веб-сервер <b>Nginx</b> и <b>Docker</b> контейнеры:<br>
+База Данных - <b>PostgreSql</b><br>
 
 Инфраструктура описана в <b>docker-compose</b> `/infra/docker-compose.yml`
 
