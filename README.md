@@ -9,14 +9,13 @@ http://django-foodgram.ru
 Фронтенд написан на <b>React</b><br> 
 Бекэнд написан на <b>Django Rest Framework</b><br>
 Документация со всеми эндпоинтами доступна здесь - http://django-foodgram.ru/api/docs/redoc.html <br>
-<dl>
-<dt>Для продакшена используется веб-сервер `Nginx` и 4 <b>docker</b> контенера:</dt>
-Frontend
-Backend
-PostgreSql
-Nginx
-</dl>
-Инфраструктура описана в директории `/infra/docker-compose.yml`
+Для продакшена используется веб-сервер `Nginx` и 4 <b>docker</b> контенера:
+Frontend<br>
+Backend<br>
+PostgreSql<br>
+Nginx<br>
+
+Инфраструктура описана в <b>docker-compose</b> `/infra/docker-compose.yml`
 
 ## Как запустить проект на удаленном сервере:
 ### Подготовить сервер ###
