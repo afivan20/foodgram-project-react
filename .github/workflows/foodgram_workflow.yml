@@ -59,7 +59,7 @@ jobs:
           script: |
             sudo docker pull afivan20/foodgram_frontend
             sudo docker pull afivan20/foodgram_backend
-            docker-compose down -v
+            # docker-compose down -v
             touch .env
             cat /dev/null > .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
