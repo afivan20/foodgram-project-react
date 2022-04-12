@@ -6,11 +6,11 @@ Foodgram - это книга рецептов, здесь вы можете об
 http://django-foodgram.ru
 
 ## Технологии
-[![React](https://img.shields.io/badge/-React-464646?style=flat-square&logo=React)](https://reactjs.org/) - Фронтенд. <br>  
-[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/) - API для бекенда.<br>  
-[![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/) - База данных.<br> 
-[![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/) - Web-Server<br>  
-[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)Всё упаковано в 4 разных контейнера.<br>  
+[![React](https://img.shields.io/badge/-React-464646?style=flat-square&logo=React)](https://reactjs.org/) - Фронтенд. <br>
+[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/) - API для бекенда.<br>
+[![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/) - База данных.<br>
+[![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/) - Web-Server<br>
+[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/) Всё упаковано в 4 разных контейнера.<br>  
 
 Документация со всеми эндпоинтами доступна здесь - http://django-foodgram.ru/api/docs/redoc.html <br>
 Инфраструктура описана в <b>docker-compose</b> `/infra/docker-compose.yml`
